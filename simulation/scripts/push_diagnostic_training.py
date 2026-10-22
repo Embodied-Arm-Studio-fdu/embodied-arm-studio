@@ -4,8 +4,10 @@
 import argparse
 import json
 import math
+import os
 from pathlib import Path
 import random
+import shutil
 import subprocess
 import sys
 
@@ -58,13 +60,18 @@ def environment(config, video=False):
 
 class RawVideoWriter:
     def __init__(self, path, width=640, height=480, fps=15):
+        configured = os.environ.get("SIMULATION_FFMPEG_PATH", "").strip()
+        ffmpeg = configured or shutil.which("ffmpeg") or "/opt/ffmpeg/bin/ffmpeg"
+        if not Path(ffmpeg).is_file() or not os.access(ffmpeg, os.X_OK):
+            raise FileNotFoundError("Set SIMULATION_FFMPEG_PATH to an executable FFmpeg: %s" % ffmpeg)
         self.path = Path(path)
         self.path.parent.mkdir(parents=True, exist_ok=True)
         command = [
-            "/home/user/opt/ffmpeg-nvenc/bin/ffmpeg", "-hide_banner", "-loglevel", "error",
+            ffmpeg, "-hide_banner", "-loglevel", "error",
             "-f", "rawvideo", "-pixel_format", "rgba", "-video_size",
             "%dx%d" % (width, height), "-framerate", str(fps), "-i", "-",
-            "-an", "-c:v", "h264_nvenc", "-preset", "p4", "-y", str(self.path),
+            "-an", "-c:v", "h264_nvenc", "-preset", "p4", "-pix_fmt", "yuv420p",
+            "-movflags", "+faststart", "-y", str(self.path),
         ]
         self.process = subprocess.Popen(command, stdin=subprocess.PIPE)
 

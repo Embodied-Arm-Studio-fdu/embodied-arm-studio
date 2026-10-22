@@ -30,10 +30,13 @@ def pull(role, manifest):
     subprocess.run(['docker', 'pull', '--platform', 'linux/amd64', reference], check=True)
     image = json.loads(command('docker', 'image', 'inspect', reference))[0]
     assert image['Os'] == 'linux' and image['Architecture'] == 'amd64'
-    assert image['Config']['Labels']['org.opencontainers.image.revision'] == manifest['source_sha']
-    assert image['Config']['Labels']['org.opencontainers.image.version'] == manifest['version']
+    source_sha = manifest['images'][role].get('source_sha', manifest['source_sha'])
+    version = manifest['images'][role].get('version', manifest['version'])
+    assert image['Config']['Labels']['org.opencontainers.image.revision'] == source_sha
+    assert image['Config']['Labels']['org.opencontainers.image.version'] == version
     assert reference in image['RepoDigests']
-    return {'reference': reference, 'image_id': image['Id'], 'platform': 'linux/amd64', 'anonymous_manifest_denied': True}
+    return {'reference': reference, 'image_id': image['Id'], 'source_sha': source_sha,
+            'version': version, 'platform': 'linux/amd64', 'anonymous_manifest_denied': True}
 
 
 def guided_start(config, project, passwords, transcript, fresh):

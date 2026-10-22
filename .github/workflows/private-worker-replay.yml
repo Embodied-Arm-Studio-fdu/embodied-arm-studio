@@ -1,0 +1,64 @@
+name: Private Worker replay repair
+on:
+  workflow_dispatch:
+    inputs:
+      source_sha:
+        description: Exact approved source commit
+        required: true
+        type: string
+permissions:
+  contents: read
+  packages: write
+concurrency:
+  group: private-worker-replay
+  cancel-in-progress: false
+jobs:
+  worker:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 40
+    env:
+      GH_TOKEN: ${{ github.token }}
+      SOURCE_SHA: ${{ inputs.source_sha }}
+      IMAGE: ghcr.io/embodied-arm-studio-fdu/embodied-arm-studio-a7-worker
+      PACKAGE: embodied-arm-studio-a7-worker
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_sha }}
+          persist-credentials: false
+      - name: Verify exact source and private repository/package
+        run: |
+          set -euo pipefail
+          [[ "$SOURCE_SHA" =~ ^[a-f0-9]{40}$ ]]
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          gh api "repos/$GITHUB_REPOSITORY" --jq '.private' | grep -qx true
+          gh api "orgs/Embodied-Arm-Studio-fdu/packages/container/$PACKAGE" --jq '.visibility' | grep -qx private
+          echo "IMAGE_TAG=a13-replay-${SOURCE_SHA:0:12}" >> "$GITHUB_ENV"
+          python3 -m unittest discover -s simulation/tests -p test_push_replay_writer.py -v
+      - name: Authenticate to private GHCR
+        run: printf '%s' "$GH_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+      - name: Build only the repaired Worker layer and push privately
+        run: |
+          set -euo pipefail
+          docker build --platform linux/amd64 --file deploy/worker-replay.Dockerfile \
+            --label "org.opencontainers.image.source=https://github.com/$GITHUB_REPOSITORY" \
+            --label "org.opencontainers.image.revision=$SOURCE_SHA" \
+            --label "org.opencontainers.image.version=$IMAGE_TAG" --tag "$IMAGE:$IMAGE_TAG" .
+          docker push "$IMAGE:$IMAGE_TAG"
+          digest=$(docker buildx imagetools inspect "$IMAGE:$IMAGE_TAG" --format '{{.Manifest.Digest}}')
+          [[ "$digest" =~ ^sha256:[a-f0-9]{64}$ ]]
+          gh api "orgs/Embodied-Arm-Studio-fdu/packages/container/$PACKAGE" --jq '.visibility' | grep -qx private
+          mkdir -p evidence
+          docker image inspect "$IMAGE:$IMAGE_TAG" > evidence/image-inspect.json
+          jq -n --arg sha "$SOURCE_SHA" --arg reference "$IMAGE@$digest" --arg version "$IMAGE_TAG" \
+            --arg run "https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
+            '{role:"worker",reference:$reference,source_sha:$sha,version:$version,visibility:"private",platform:"linux/amd64",publication_run:$run}' > evidence/worker.json
+          cat evidence/worker.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: a13-worker-image
+          path: evidence/
+          if-no-files-found: error
+      - name: Clear ephemeral registry credentials
+        if: always()
+        run: docker logout ghcr.io
