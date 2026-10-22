@@ -1,0 +1,50 @@
+name: Private prebuilt acceptance
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  packages: read
+jobs:
+  pull-and-accept:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        mode: [core, gpu-pull]
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify repository and all packages remain private
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY" --jq '.private' | grep -qx true
+          for role in api web simulation worker; do
+            gh api "orgs/Embodied-Arm-Studio-fdu/packages/container/embodied-arm-studio-a7-$role" --jq '.visibility' | grep -qx private
+          done
+      - name: Authenticate to private GHCR
+        run: printf '%s' "$GH_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+      - name: Prepare independent target runner
+        run: python -m pip install pexpect==4.9.0
+      - name: Make room for GPU image pull on ephemeral runner
+        if: matrix.mode == 'gpu-pull'
+        run: |
+          test "$RUNNER_ENVIRONMENT" = github-hosted
+          sudo rm -rf /usr/local/lib/android /opt/ghc /usr/share/dotnet /opt/hostedtoolcache/CodeQL
+          df -h /
+      - name: Actual digest pulls and default guided Core startup
+        run: python -m scripts.ci_prebuilt_acceptance --mode '${{ matrix.mode }}' --output 'a7-evidence-${{ matrix.mode }}'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: a7-acceptance-${{ matrix.mode }}
+          path: a7-evidence-${{ matrix.mode }}/
+          if-no-files-found: error
+      - name: Clear ephemeral registry credentials
+        if: always()
+        run: docker logout ghcr.io

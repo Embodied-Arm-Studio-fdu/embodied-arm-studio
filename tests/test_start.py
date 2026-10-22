@@ -19,8 +19,10 @@ class GuidedStartTest(unittest.TestCase):
         self.addCleanup(self.output.close)
 
     def test_unpublished_default_stops_before_configuration_or_docker(self):
+        pending = Path(self.temp.name) / 'pending-images.json'
+        pending.write_text(json.dumps({'status': 'pending-rights-and-registry'}))
         with patch('builtins.input', return_value='core'), patch.object(start.subprocess, 'run') as run:
-            self.assertEqual(1, start.main(['--config', str(self.config)]))
+            self.assertEqual(1, start.main(['--config', str(self.config), '--image-manifest', str(pending)]))
         run.assert_not_called()
         self.assertFalse(self.config.exists())
 

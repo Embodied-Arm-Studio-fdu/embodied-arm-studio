@@ -1,17 +1,55 @@
 {
   "schema_version": 1,
-  "version": "20261021-a5",
-  "status": "pending-rights-and-registry",
-  "platforms": ["linux/amd64"],
+  "version": "a7-20261022-24dc21aa1bfc",
+  "status": "released",
+  "platforms": [
+    "linux/amd64"
+  ],
   "images": {
-    "api": {"reference": null, "dockerfile": "docker/api.Dockerfile", "services": ["api", "migrate", "bootstrap"]},
-    "web": {"reference": null, "dockerfile": "docker/web.Dockerfile", "services": ["web"]},
-    "simulation": {"reference": null, "dockerfile": "deploy/simulation.Dockerfile", "services": ["simulation", "callbacks"]},
-    "worker": {"reference": null, "dockerfile": "deploy/worker.Dockerfile", "services": ["worker", "gpu-check"]}
+    "api": {
+      "reference": "ghcr.io/embodied-arm-studio-fdu/embodied-arm-studio-a7-api@sha256:b2d45b48e0c314a28b1625fcbe2d5549115ddf3bb1d1ad8775dd973652f954be",
+      "dockerfile": "docker/api.Dockerfile",
+      "services": [
+        "api",
+        "migrate",
+        "bootstrap"
+      ],
+      "tag": "ghcr.io/embodied-arm-studio-fdu/embodied-arm-studio-a7-api:a7-20261022-24dc21aa1bfc"
+    },
+    "web": {
+      "reference": "ghcr.io/embodied-arm-studio-fdu/embodied-arm-studio-a7-web@sha256:66ea5f0526ae6b58754a07971309b9374d8ab76040cc2126c1fe338693824eed",
+      "dockerfile": "docker/web.Dockerfile",
+      "services": [
+        "web"
+      ],
+      "tag": "ghcr.io/embodied-arm-studio-fdu/embodied-arm-studio-a7-web:a7-20261022-24dc21aa1bfc"
+    },
+    "simulation": {
+      "reference": "ghcr.io/embodied-arm-studio-fdu/embodied-arm-studio-a7-simulation@sha256:df81f5aabec9f84c5650c26a859c1bcea43a1c5f7bb9d738820738fdf66916be",
+      "dockerfile": "deploy/simulation.Dockerfile",
+      "services": [
+        "simulation",
+        "callbacks"
+      ],
+      "tag": "ghcr.io/embodied-arm-studio-fdu/embodied-arm-studio-a7-simulation:a7-20261022-24dc21aa1bfc"
+    },
+    "worker": {
+      "reference": "ghcr.io/embodied-arm-studio-fdu/embodied-arm-studio-a7-worker@sha256:41dccb9d880bddc0fba2b7df60a5d5695a38290057f76f622c6ec00a41f84e89",
+      "dockerfile": "deploy/worker.Dockerfile",
+      "services": [
+        "worker",
+        "gpu-check"
+      ],
+      "tag": "ghcr.io/embodied-arm-studio-fdu/embodied-arm-studio-a7-worker:a7-20261022-24dc21aa1bfc"
+    }
   },
   "third_party_images": {
     "postgres": "postgres:16.15-bookworm",
     "redis": "redis:7.2.5-bookworm",
     "media": "bluenviron/mediamtx:1.19.3"
-  }
+  },
+  "visibility": "private",
+  "source_sha": "24dc21aa1bfc181a2749b6a4dca8a60a28b31aeb",
+  "source_repository": "https://github.com/Embodied-Arm-Studio-fdu/embodied-arm-studio",
+  "publication_run": "https://github.com/Embodied-Arm-Studio-fdu/embodied-arm-studio/actions/runs/39716773067"
 }
