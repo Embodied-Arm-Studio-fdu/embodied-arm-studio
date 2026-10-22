@@ -16,10 +16,13 @@ jobs:
       matrix:
         include:
           - role: api
+            existing_digest: sha256:b2d45b48e0c314a28b1625fcbe2d5549115ddf3bb1d1ad8775dd973652f954be
             dockerfile: docker/api.Dockerfile
           - role: web
+            existing_digest: sha256:66ea5f0526ae6b58754a07971309b9374d8ab76040cc2126c1fe338693824eed
             dockerfile: docker/web.Dockerfile
           - role: simulation
+            existing_digest: sha256:df81f5aabec9f84c5650c26a859c1bcea43a1c5f7bb9d738820738fdf66916be
             dockerfile: deploy/simulation.Dockerfile
           - role: worker
             dockerfile: deploy/worker.Dockerfile
@@ -28,6 +31,7 @@ jobs:
       IMAGE_TAG: a7-20261022-24dc21aa1bfc
       GH_TOKEN: ${{ github.token }}
       ROLE: ${{ matrix.role }}
+      EXISTING_DIGEST: ${{ matrix.existing_digest }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -45,28 +49,46 @@ jobs:
           echo "PACKAGE=$package" >> "$GITHUB_ENV"
           code=$(curl -sS -o "$RUNNER_TEMP/package-before.json" -w '%{http_code}'             -H "Authorization: Bearer $GH_TOKEN"             "https://api.github.com/orgs/Embodied-Arm-Studio-fdu/packages/container/$package")
           if [ "$code" = 200 ]; then
+            jq '{name,visibility,repository}' "$RUNNER_TEMP/package-before.json"
             jq -e '.visibility == "private"' "$RUNNER_TEMP/package-before.json"
-            gh api --paginate "orgs/Embodied-Arm-Studio-fdu/packages/container/$package/versions" > "$RUNNER_TEMP/versions.json"
-            jq -e --arg tag "$IMAGE_TAG" 'all(.[]; (.metadata.container.tags | index($tag)) == null)' "$RUNNER_TEMP/versions.json"
+            if [ -z "$EXISTING_DIGEST" ]; then
+              gh api --paginate "orgs/Embodied-Arm-Studio-fdu/packages/container/$package/versions" > "$RUNNER_TEMP/versions.json"
+              jq -e --arg tag "$IMAGE_TAG" 'all(.[]; (.metadata.container.tags | index($tag)) == null)' "$RUNNER_TEMP/versions.json"
+            fi
           else
             test "$code" = 404
           fi
           df -h /
       - name: Authenticate to private GHCR
         run: printf '%s' "$GH_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+      - name: Free unused SDKs on ephemeral hosted Worker builder
+        if: matrix.role == 'worker'
+        run: |
+          test "$RUNNER_ENVIRONMENT" = github-hosted
+          sudo rm -rf /usr/local/lib/android /opt/ghc /usr/share/dotnet /opt/hostedtoolcache/CodeQL
+          df -h /
+      - name: Verify and pull images already published by the first A-7 run
+        if: matrix.existing_digest != ''
+        run: |
+          test "$(docker buildx imagetools inspect "$IMAGE:$IMAGE_TAG" --format '{{.Manifest.Digest}}')" = "$EXISTING_DIGEST"
+          docker pull "$IMAGE@$EXISTING_DIGEST"
+          docker tag "$IMAGE@$EXISTING_DIGEST" "$IMAGE:$IMAGE_TAG"
       - name: Build exact approved source without SDK or runtime mounts
+        if: matrix.existing_digest == ''
         run: |
           docker build --platform linux/amd64             --label "org.opencontainers.image.source=https://github.com/$GITHUB_REPOSITORY"             --label "org.opencontainers.image.revision=$SOURCE_SHA"             --label "org.opencontainers.image.version=$IMAGE_TAG"             --file '${{ matrix.dockerfile }}' --tag "$IMAGE:$IMAGE_TAG" .
       - name: Push private image and record actual registry identity
         shell: bash
         run: |
           set -euo pipefail
-          docker push "$IMAGE:$IMAGE_TAG"
+          if [ -z "$EXISTING_DIGEST" ]; then docker push "$IMAGE:$IMAGE_TAG"; fi
           digest=$(docker buildx imagetools inspect "$IMAGE:$IMAGE_TAG" --format '{{.Manifest.Digest}}')
           [[ "$digest" =~ ^sha256:[a-f0-9]{64}$ ]]
           docker image inspect "$IMAGE:$IMAGE_TAG" > "$RUNNER_TEMP/image-inspect.json"
           gh api "orgs/Embodied-Arm-Studio-fdu/packages/container/$PACKAGE" > "$RUNNER_TEMP/package-after.json"
-          jq -e --arg repo "$GITHUB_REPOSITORY" '.visibility == "private" and .repository.full_name == $repo' "$RUNNER_TEMP/package-after.json"
+          jq '{name,visibility,repository}' "$RUNNER_TEMP/package-after.json"
+          jq -e '.visibility == "private"' "$RUNNER_TEMP/package-after.json"
+          jq -e --arg sha "$SOURCE_SHA" --arg source "https://github.com/$GITHUB_REPOSITORY" --arg version "$IMAGE_TAG" '.[0] | .Os == "linux" and .Architecture == "amd64" and .Config.Labels["org.opencontainers.image.revision"] == $sha and .Config.Labels["org.opencontainers.image.source"] == $source and .Config.Labels["org.opencontainers.image.version"] == $version' "$RUNNER_TEMP/image-inspect.json"
           mkdir -p evidence
           jq -n --arg role "$ROLE" --arg image "$IMAGE" --arg tag "$IMAGE_TAG"             --arg digest "$digest" --arg sha "$SOURCE_SHA"             --arg run "https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"             --slurpfile inspect "$RUNNER_TEMP/image-inspect.json"             --slurpfile package "$RUNNER_TEMP/package-after.json"             '{role:$role,reference:($image+"@"+$digest),tag:($image+":"+$tag),source_sha:$sha,platform:"linux/amd64",run:$run,visibility:$package[0].visibility,repository:$package[0].repository.full_name,image_id:$inspect[0][0].Id,labels:$inspect[0][0].Config.Labels}'             > "evidence/$ROLE.json"
           cat "evidence/$ROLE.json"
