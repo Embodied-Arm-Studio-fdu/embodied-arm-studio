@@ -250,12 +250,18 @@ def main(argv=None):
         elif args.command == 'bootstrap':
             if not re.fullmatch(r'[a-z0-9]+(?:-[a-z0-9]+)*', args.namespace) or len(args.namespace) > 48:
                 raise ValueError('Invalid bootstrap namespace')
-            command += ['run', '--rm'] + (['--no-build'] if values.get('STUDIO_IMAGE_SOURCE') == 'prebuilt' else []) + (['-it'] if sys.stdin.isatty() else []) + ['--no-deps', 'bootstrap', 'python', '-m', 'scripts.bootstrap_self_host', '--namespace', args.namespace, '--apply']
+            if values.get('STUDIO_IMAGE_SOURCE') == 'prebuilt':
+                # compose run has no --no-build flag. Require the pinned image
+                # pulled by up; never fall back to a source build or a new pull.
+                subprocess.run(['docker', 'image', 'inspect', values['STUDIO_IMAGE_API']], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, env=compose_environment())
+            command += ['run', '--rm'] + (['--pull', 'never'] if values.get('STUDIO_IMAGE_SOURCE') == 'prebuilt' else []) + (['-it'] if sys.stdin.isatty() else []) + ['--no-deps', 'bootstrap', 'python', '-m', 'scripts.bootstrap_self_host', '--namespace', args.namespace, '--apply']
         elif args.command == 'gpu-check':
             if values['STUDIO_DEPLOY_MODE'] != 'gpu':
                 raise ValueError('gpu-check requires a GPU deployment configuration')
             validate_config(values)
-            command += ['run', '--rm'] + (['--no-build'] if values.get('STUDIO_IMAGE_SOURCE') == 'prebuilt' else []) + ['--no-deps', 'gpu-check']
+            if values.get('STUDIO_IMAGE_SOURCE') == 'prebuilt':
+                subprocess.run(['docker', 'image', 'inspect', values['STUDIO_IMAGE_WORKER']], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, env=compose_environment())
+            command += ['run', '--rm'] + (['--pull', 'never'] if values.get('STUDIO_IMAGE_SOURCE') == 'prebuilt' else []) + ['--no-deps', 'gpu-check']
         else:
             command += {'status': ['ps'], 'logs': ['logs', '--tail', '100', '-f'], 'down': ['down']}[args.command]
         subprocess.run(command, check=True, env=compose_environment())

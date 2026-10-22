@@ -1,6 +1,7 @@
 import contextlib
 import io
 import json
+import subprocess
 from pathlib import Path
 import tempfile
 import unittest
@@ -84,8 +85,22 @@ class GuidedStartTest(unittest.TestCase):
         self.assertEqual('always', command[command.index('--pull') + 1])
         with patch.object(self_host.sys.stdin, 'isatty', return_value=True), patch.object(self_host.subprocess, 'run') as run:
             self.assertEqual(0, self_host.main(['--config', str(self.config), 'bootstrap']))
-        self.assertIn('-it', run.call_args.args[0])
+        bootstrap = run.call_args.args[0]
+        self.assertIn('-it', bootstrap)
+        self.assertNotIn('--no-build', bootstrap)
+        self.assertNotIn('--build', bootstrap)
+        self.assertEqual('never', bootstrap[bootstrap.index('--pull') + 1])
+        self.assertEqual(['docker', 'image', 'inspect'], run.call_args_list[0].args[0][:3])
         self.assertIn('--no-build', run.call_args.args[0])
+
+    def test_missing_prebuilt_bootstrap_image_stops_before_compose_run(self):
+        self_host.initialize(self.config)
+        with self.config.open('a') as target:
+            target.write("STUDIO_IMAGE_SOURCE='prebuilt'\nSTUDIO_IMAGE_API='registry.example/api@sha256:" + 'a' * 64 + "'\n")
+        with patch.object(self_host.subprocess, 'run', side_effect=subprocess.CalledProcessError(1, 'inspect')) as run:
+            self.assertEqual(1, self_host.main(['--config', str(self.config), 'bootstrap']))
+        self.assertEqual(1, run.call_count)
+        self.assertEqual(['docker', 'image', 'inspect'], run.call_args.args[0][:3])
 
     def test_existing_source_cannot_silently_switch(self):
         self_host.initialize(self.config)
