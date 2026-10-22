@@ -37,6 +37,11 @@ jobs:
           python3 -m unittest discover -s simulation/tests -p test_push_replay_writer.py -v
       - name: Authenticate to private GHCR
         run: printf '%s' "$GH_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+      - name: Make room only on the disposable hosted Worker builder
+        run: |
+          test "$RUNNER_ENVIRONMENT" = github-hosted
+          sudo rm -rf /usr/local/lib/android /opt/ghc /usr/share/dotnet /opt/hostedtoolcache/CodeQL
+          df -h /
       - name: Build only the repaired Worker layer and push privately
         run: |
           set -euo pipefail
