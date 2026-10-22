@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "default_assistance_level": 4,
+  "maximum_student_level": 5,
+  "full_implementation_level": 6,
+  "require_teacher_authorization_for_full_implementation": true,
+  "require_student_design_before_patch": true,
+  "required_design_sections": ["observation", "action", "reward", "termination"],
+  "generic_shell_enabled": false,
+  "real_robot_control_enabled": false
+}

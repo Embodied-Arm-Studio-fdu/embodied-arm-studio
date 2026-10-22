@@ -1,0 +1,9 @@
+{
+  "schema_version": "1.0",
+  "providers": {
+    "mock": {"external_data_transfer": false},
+    "openai-compatible": {"requires_server_secret": true, "timeout_seconds": 30},
+    "deepseek": {"requires_server_secret": true, "timeout_seconds": 30},
+    "anthropic": {"requires_server_secret": true, "timeout_seconds": 30}
+  }
+}

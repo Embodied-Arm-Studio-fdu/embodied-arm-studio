@@ -1,0 +1,21 @@
+{
+  "schema": "studio-reference-models/v1",
+  "description": "Only the three task initialization checkpoints; no users, databases, videos or logs.",
+  "files": [
+    {
+      "path": "experimental/p2_r6_s1_grasp/random_xy/checkpoints/model_20000.pt",
+      "sha256": "3f7ce0e141c16bde00646ced6482f23cbae1562e6c074001b18239c2b8d01309",
+      "bytes": 190598
+    },
+    {
+      "path": "experimental/p3_1_s1_lift/train_20k/checkpoints/model_best.pt",
+      "sha256": "3a564c8effb7b06cad2f9e624e57732ba209198c70267569d26a40def180727b",
+      "bytes": 153418
+    },
+    {
+      "path": "experimental/p4_1_s1_place/train_20k/checkpoints/model_latest.pt",
+      "sha256": "eb9fab2287ffd6a735dc27a1ccccd8eb3c71678617b4aef2bac1561d556cf291",
+      "bytes": 179078
+    }
+  ]
+}

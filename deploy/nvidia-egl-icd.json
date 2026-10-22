@@ -1,0 +1,7 @@
+{
+  "ICD": {
+    "api_version": "1.2.0",
+    "library_path": "libEGL_nvidia.so.0"
+  },
+  "file_format_version": "1.0.0"
+}

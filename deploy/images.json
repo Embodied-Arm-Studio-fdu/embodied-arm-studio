@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "version": "20261021-a5",
+  "status": "pending-rights-and-registry",
+  "platforms": ["linux/amd64"],
+  "images": {
+    "api": {"reference": null, "dockerfile": "docker/api.Dockerfile", "services": ["api", "migrate", "bootstrap"]},
+    "web": {"reference": null, "dockerfile": "docker/web.Dockerfile", "services": ["web"]},
+    "simulation": {"reference": null, "dockerfile": "deploy/simulation.Dockerfile", "services": ["simulation", "callbacks"]},
+    "worker": {"reference": null, "dockerfile": "deploy/worker.Dockerfile", "services": ["worker", "gpu-check"]}
+  },
+  "third_party_images": {
+    "postgres": "postgres:16.15-bookworm",
+    "redis": "redis:7.2.5-bookworm",
+    "media": "bluenviron/mediamtx:1.19.3"
+  }
+}

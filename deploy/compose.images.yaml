@@ -1,0 +1,10 @@
+# Used with --no-build; source Compose remains available to developers.
+services:
+  migrate:
+    image: ${STUDIO_IMAGE_API:?Use the released image manifest}
+  api:
+    image: ${STUDIO_IMAGE_API:?Use the released image manifest}
+  bootstrap:
+    image: ${STUDIO_IMAGE_API:?Use the released image manifest}
+  web:
+    image: ${STUDIO_IMAGE_WEB:?Use the released image manifest}

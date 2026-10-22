@@ -1,0 +1,5 @@
+{
+  "schema_version": "1.0",
+  "deny": [".env", "**/.env", "**/*secret*", "**/*credential*", "agent/policy/**", "apps/api/**"],
+  "lesson_allowlist": ["controller.json"]
+}

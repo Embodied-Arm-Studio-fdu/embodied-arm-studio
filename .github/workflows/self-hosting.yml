@@ -1,0 +1,31 @@
+name: Self-hosting checks
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  package-and-core:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install test dependencies
+        run: python -m pip install -r requirements.txt PyYAML==6.0.2
+      - name: Test setup, bootstrap and package isolation
+        run: python -m unittest tests.test_start tests.test_self_hosting tests.test_reference_models tests.test_bootstrap_self_host -v
+      - name: Initialize isolated acceptance stack
+        run: python scripts/self_host.py init --project ci-studio --port 18080
+      - name: Build and start Core
+        run: python scripts/self_host.py up
+      - name: Verify fresh users, courses and login
+        run: python -m scripts.smoke_self_host --config .env.selfhost
+      - name: Check source export
+        run: python scripts/export_release.py /tmp/embodied-arm-studio-source.tar.gz
+      - name: Stop acceptance stack, preserving volumes
+        if: always()
+        run: python scripts/self_host.py down

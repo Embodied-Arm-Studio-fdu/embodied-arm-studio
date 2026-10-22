@@ -1,0 +1,16 @@
+{
+  "canonical_input": {
+    "tasks": [
+      {
+        "intent_tags": [
+          "reach",
+          "教学"
+        ],
+        "id": "示例"
+      }
+    ],
+    "catalog_version": "task-catalog/v1"
+  },
+  "canonical_json": "{\"catalog_version\":\"task-catalog/v1\",\"tasks\":[{\"id\":\"示例\",\"intent_tags\":[\"reach\",\"教学\"]}]}",
+  "expected_digest": "sha256:0df5005ebdb3fcfe2bfb0a6732283a8309c9f272a241a3bb31f47c54dfe2941c"
+}

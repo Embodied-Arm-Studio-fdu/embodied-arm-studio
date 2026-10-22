@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0",
+  "intents": [
+    {
+      "id": "generic_shell",
+      "reason": "Teaching Agent 不具备宿主机 Shell 或任意代码执行权限。",
+      "patterns": ["(?:执行|运行|打开).{0,12}(?:shell|终端|命令行)", "\\b(?:bash|sudo|rm -rf)\\b"]
+    },
+    {
+      "id": "secret_access",
+      "reason": "服务端密钥不会进入 Agent 上下文或浏览器响应。",
+      "patterns": ["(?:读取|显示|泄露|告诉我).{0,12}(?:api.?key|密钥|token|密码)"]
+    },
+    {
+      "id": "real_robot_control",
+      "reason": "当前平台禁用真实机器人控制。",
+      "patterns": ["(?:直接|立即|绕过.{0,8})?(?:控制|驱动).{0,12}(?:真实|实体).{0,6}(?:机械臂|机器人)"]
+    },
+    {
+      "id": "bypass_approval",
+      "reason": "Patch 审批、高风险确认和安全限制不可绕过。",
+      "patterns": ["(?:绕过|跳过|取消|自动).{0,12}(?:审批|批准|确认|安全限制|关节限位)"]
+    },
+    {
+      "id": "fabricate_evidence",
+      "reason": "运行证据必须保留并由实际 Mock 运行产生。",
+      "patterns": ["(?:伪造|篡改|删除).{0,12}(?:训练|成功|指标|证据|失败运行)"]
+    }
+  ]
+}

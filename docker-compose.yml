@@ -1,0 +1,85 @@
+services:
+  postgres:
+    image: postgres:16.15-bookworm
+    restart: unless-stopped
+    environment:
+      # These defaults are for local development only. Override them in deployments.
+      POSTGRES_USER: ${POSTGRES_USER:-studio}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-studio-local-dev-only}
+      POSTGRES_DB: ${POSTGRES_DB:-embodied_arm_studio}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+
+  migrate:
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+    restart: "no"
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://studio:studio-local-dev-only@postgres:5432/embodied_arm_studio}
+    command: alembic upgrade head
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  api:
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+    restart: unless-stopped
+    working_dir: /app
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://studio:studio-local-dev-only@postgres:5432/embodied_arm_studio}
+      RUN_REPOSITORY_MODE: postgresql
+      USER_JWT_SECRET: ${USER_JWT_SECRET:?USER_JWT_SECRET must be set}
+      USER_JWT_ISSUER: ${USER_JWT_ISSUER:-embodied-arm-studio}
+      USER_JWT_AUDIENCE: ${USER_JWT_AUDIENCE:-embodied-arm-studio-api}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-}
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+      DEEPSEEK_MODEL: ${DEEPSEEK_MODEL:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-}
+    command: python -m uvicorn apps.api.main:app --host 0.0.0.0 --port 8000
+    volumes:
+      - studio_data:/app/var
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=2)"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 30s
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+  web:
+    build:
+      context: .
+      dockerfile: docker/web.Dockerfile
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:5173/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  studio_data:

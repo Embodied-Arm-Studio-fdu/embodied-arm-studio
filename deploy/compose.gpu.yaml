@@ -1,0 +1,147 @@
+x-simulation-environment: &simulation-environment
+  PYTHONPATH: /app:/app/simulation/src
+  SIMULATION_REDIS_URL: redis://redis:6379/0
+  SIMULATION_REDIS_NAMESPACE: selfhost
+  SIMULATION_RQ_QUEUE: selfhost-gpu
+  SIMULATION_ARTIFACTS_ROOT: /app/var/artifacts
+  SIMULATION_SERVICE_TOKEN: ${SIMULATION_SERVICE_TOKEN:?Run self_host.py init}
+  SIMULATION_BACKEND_BASE_URL: http://api:8000
+  SIMULATION_BACKEND_SERVICE_TOKEN: ${INTERNAL_RUN_EVENT_SERVICE_TOKEN:?Run self_host.py init}
+  SIMULATION_HEARTBEAT_INTERVAL: '5'
+
+services:
+  api:
+    environment:
+      SIMULATION_BASE_URL: http://simulation:8090
+      SIMULATION_SERVICE_TOKEN: ${SIMULATION_SERVICE_TOKEN:?Run self_host.py init}
+      INTERNAL_RUN_EVENT_SERVICE_TOKEN: ${INTERNAL_RUN_EVENT_SERVICE_TOKEN:?Run self_host.py init}
+      ARTIFACT_STORAGE_ROOT: /app/var/artifacts
+    depends_on:
+      simulation: {condition: service_healthy}
+
+  redis:
+    image: redis:7.2.5-bookworm
+    restart: unless-stopped
+    command: [redis-server, --appendonly, 'yes']
+    volumes: [redis_data:/data]
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  simulation:
+    build:
+      context: ..
+      dockerfile: deploy/simulation.Dockerfile
+    restart: unless-stopped
+    environment: *simulation-environment
+    command: [python, -m, uvicorn, simulation_core.http_api:create_app_from_env, --factory, --host, 0.0.0.0, --port, '8090']
+    volumes: [studio_data:/app/var]
+    depends_on:
+      redis: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, python, -c, "import os,urllib.request; r=urllib.request.Request('http://127.0.0.1:8090/simulation/task-catalog',headers={'Authorization':'Bearer '+os.environ['SIMULATION_SERVICE_TOKEN']}); urllib.request.urlopen(r,timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  callbacks:
+    build:
+      context: ..
+      dockerfile: deploy/simulation.Dockerfile
+    restart: unless-stopped
+    environment: *simulation-environment
+    command: [python, simulation/scripts/callback_dispatcher.py, --redis-url, 'redis://redis:6379/0', --namespace, selfhost, --backend-base-url, 'http://api:8000']
+    volumes: [studio_data:/app/var]
+    depends_on:
+      simulation: {condition: service_healthy}
+      api: {condition: service_healthy}
+
+  media:
+    image: bluenviron/mediamtx:1.19.3
+    restart: unless-stopped
+    environment:
+      MTX_WEBRTCADDITIONALHOSTS: ${STUDIO_PUBLIC_HOST:?Set a LAN IP or DNS host}
+      MTX_WEBRTCLOCALUDPADDRESS: ${STUDIO_MEDIA_UDP_ADDRESS-:${STUDIO_MEDIA_UDP_PORT:-18189}}
+      MTX_WEBRTCLOCALTCPADDRESS: ':${STUDIO_MEDIA_TCP_PORT:-18191}'
+      MTX_WEBRTCIPSFROMINTERFACES: 'no'
+      MTX_WEBRTCALLOWORIGINS: ${STUDIO_WEB_ORIGIN:?Set the exact browser origin}
+    volumes: ['./mediamtx.yml:/mediamtx.yml:ro']
+    ports:
+      - '${STUDIO_BIND_ADDRESS:-127.0.0.1}:${STUDIO_MEDIA_HTTP_PORT:-18889}:18889/tcp'
+      - '${STUDIO_BIND_ADDRESS:-127.0.0.1}:${STUDIO_MEDIA_UDP_PORT:-18189}:${STUDIO_MEDIA_UDP_PORT:-18189}/udp'
+      - '${STUDIO_BIND_ADDRESS:-127.0.0.1}:${STUDIO_MEDIA_TCP_PORT:-18191}:${STUDIO_MEDIA_TCP_PORT:-18191}/tcp'
+
+  worker: &gpu-worker
+    build:
+      context: ..
+      dockerfile: deploy/worker.Dockerfile
+    restart: unless-stopped
+    init: true
+    # Share MediaMTX's namespace to preserve the loopback-only RTSP contract.
+    network_mode: service:media
+    environment:
+      <<: *simulation-environment
+      PYTHONPATH: /opt/isaacgym/python:/app:/app/simulation/src
+      SIMULATION_S1_ASSET_ROOT: /opt/s1
+      SIMULATION_FFMPEG_PATH: /opt/ffmpeg/bin/ffmpeg
+      SIMULATION_STREAM_RTSP_BASE: rtsp://127.0.0.1:18554
+      SIMULATION_STREAM_PUBLIC_BASE_URL: ${STUDIO_STREAM_ORIGIN:?Set a browser-reachable video origin}
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility,graphics,video
+      VK_ICD_FILENAMES: ${STUDIO_VULKAN_ICD:-/app/deploy/nvidia-egl-icd.json}
+      VK_DRIVER_FILES: ${STUDIO_VULKAN_ICD:-/app/deploy/nvidia-egl-icd.json}
+      SIMULATION_STREAM_ALLOW_LOOPBACK_PLAYBACK: ${STUDIO_ALLOW_LOOPBACK_PLAYBACK:-0}
+      DISPLAY: ''
+    volumes:
+      - studio_data:/app/var
+      - type: bind
+        source: ${ISAAC_GYM_PATH:?Set an extracted Isaac Gym Preview 4 directory}
+        target: /opt/isaacgym
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${S1_ASSETS_PATH:?Set the S1 description directory}
+        target: /opt/s1
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${REFERENCE_MODELS_PATH:?Run GPU init to unpack verified models}
+        target: /app/simulation/artifacts
+        read_only: true
+        bind: {create_host_path: false}
+      - torch_extensions:/root/.cache/torch_extensions
+    shm_size: 2gb
+    stop_grace_period: 60s
+    deploy:
+      replicas: 1
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ['${STUDIO_GPU_DEVICE:-0}']
+              capabilities: [gpu]
+    depends_on:
+      media: {condition: service_started}
+      simulation: {condition: service_healthy}
+      api: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, python3, -c, "import os,sys; from simulation.scripts.start_rq_worker import live_workers; sys.exit(0 if len(live_workers(os.environ['SIMULATION_REDIS_URL'],os.environ['SIMULATION_RQ_QUEUE'])) == 1 else 1)"]
+      interval: 15s
+      timeout: 10s
+      retries: 12
+      start_period: 90s
+
+  # Run without Redis, API, MediaMTX, or an RQ worker registration.
+  gpu-check:
+    <<: *gpu-worker
+    profiles: [tools]
+    network_mode: none
+    restart: 'no'
+    depends_on: {}
+    healthcheck: {disable: true}
+    command: [python3, deploy/worker_entrypoint.py, --check-only]
+
+volumes:
+  redis_data:
+  torch_extensions:

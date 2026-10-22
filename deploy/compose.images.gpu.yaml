@@ -1,0 +1,9 @@
+services:
+  simulation:
+    image: ${STUDIO_IMAGE_SIMULATION:?Use the released image manifest}
+  callbacks:
+    image: ${STUDIO_IMAGE_SIMULATION:?Use the released image manifest}
+  worker:
+    image: ${STUDIO_IMAGE_WORKER:?Use the released image manifest}
+  gpu-check:
+    image: ${STUDIO_IMAGE_WORKER:?Use the released image manifest}

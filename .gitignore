@@ -1,0 +1,37 @@
+# Private runtime configuration must never enter the repository.
+midterm-runtime.env
+.env
+
+# Generated demo artifacts are runtime data, not source.
+/var/midterm-demo-artifacts/
+
+# Private configuration, dependencies and generated runtime state.
+.env.*
+!.env.example
+!*.env.example
+*.env
+!*.env.example
+.venv/
+.tools/
+**/node_modules/
+**/dist/
+**/__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.vite/
+/var/
+/simulation/artifacts/
+/simulation/doc/reports/
+/simulation/doc/P_report/
+/external/
+/releases/
+*.log
+*.sql
+*.dump
+*.pt
+*.pth
+*.onnx
+*.mp4
+*.webm
+.DS_Store

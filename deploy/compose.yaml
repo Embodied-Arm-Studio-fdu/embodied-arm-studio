@@ -1,0 +1,82 @@
+# Managed by scripts/self_host.py; independent of the existing local Compose stack.
+x-platform-environment: &platform-environment
+  DATABASE_URL: postgresql+psycopg://studio:${POSTGRES_PASSWORD:?Run self_host.py init}@postgres:5432/studio
+  RUN_REPOSITORY_MODE: postgresql
+  ARTIFACT_STORAGE_ROOT: /app/var/artifacts
+  USER_JWT_SECRET: ${USER_JWT_SECRET:?Run self_host.py init}
+  USER_JWT_ISSUER: embodied-arm-studio
+  USER_JWT_AUDIENCE: embodied-arm-studio-api
+  OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+  OPENAI_MODEL: ${OPENAI_MODEL:-}
+  OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://api.openai.com/v1}
+  DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+  DEEPSEEK_MODEL: ${DEEPSEEK_MODEL:-}
+  ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+  ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-}
+
+x-platform-build: &platform-build
+  context: ..
+  dockerfile: docker/api.Dockerfile
+
+services:
+  postgres:
+    image: postgres:16.15-bookworm
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: studio
+      POSTGRES_DB: studio
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Run self_host.py init}
+    volumes: [postgres_data:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U studio -d studio']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  migrate:
+    build: *platform-build
+    environment: *platform-environment
+    command: [alembic, upgrade, head]
+    restart: 'no'
+    depends_on:
+      postgres: {condition: service_healthy}
+
+  api:
+    build: *platform-build
+    restart: unless-stopped
+    environment: *platform-environment
+    volumes: [studio_data:/app/var]
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+
+  bootstrap:
+    build: *platform-build
+    profiles: [tools]
+    environment: *platform-environment
+    volumes: [studio_data:/app/var]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+
+  web:
+    build:
+      context: ..
+      dockerfile: docker/web.Dockerfile
+    restart: unless-stopped
+    ports: ['${STUDIO_BIND_ADDRESS:-127.0.0.1}:${STUDIO_HTTP_PORT:-8080}:5173']
+    depends_on:
+      api: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, wget, --quiet, --tries=1, --spider, 'http://127.0.0.1:5173/api/health']
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+volumes:
+  postgres_data:
+  studio_data:

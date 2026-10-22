@@ -1,0 +1,35 @@
+{
+  "id": "quick-start",
+  "title": "10 分钟三关节 Mock 概念实验",
+  "summary": "在 deterministic 三关节教学近似中观察动作缩放与 seed。它不是 S1 六自由度仿真，不训练神经网络，也不产生正式训练结论。",
+  "estimated_minutes": 10,
+  "steps": [
+    {
+      "id": "safety",
+      "title": "平台与安全",
+      "objective": "区分 Mock 概念实验、S1 正式流程和真实机器人控制。",
+      "theory": "本课程只在 deterministic 三关节 Mock 中产生教学状态。导出物仅是演示清单，不是 S1 策略，也不会发送真实机器人动作。",
+      "prediction": "完成后，导出清单中的 real_robot_control_enabled 应为 false。",
+      "success": "阅读安全边界并完成检查点。",
+      "allowed_files": ["controller.json"]
+    },
+    {
+      "id": "action-scale",
+      "title": "动作缩放与关节控制",
+      "objective": "观察 action_scale 如何改变机械臂接近目标的速度。",
+      "theory": "策略先计算关节增量，仿真器再乘以 action_scale。值过大可能产生震荡，值过小会收敛缓慢。",
+      "prediction": "将 action_scale 从 0.20 改为 0.55，前 20 步距离下降更快。",
+      "success": "完成一次 Mock 运行并看到 distance 下降。",
+      "allowed_files": ["controller.json"]
+    },
+    {
+      "id": "strategy-compare",
+      "title": "策略与实验对比",
+      "objective": "比较经典 P 控制和带探索噪声策略的稳定性。",
+      "theory": "经典控制行为确定；探索演示在早期加入可复现噪声，并随运行步数衰减。比较时必须记录 seed；结果只解释此三关节教学近似。",
+      "prediction": "相同 seed 下，P 控制曲线更平滑，探索策略早期波动更明显。",
+      "success": "运行两个策略并在对比视图看到最终 reward、success rate 与 seed。",
+      "allowed_files": ["controller.json"]
+    }
+  ]
+}
