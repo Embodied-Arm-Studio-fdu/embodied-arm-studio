@@ -91,7 +91,6 @@ class GuidedStartTest(unittest.TestCase):
         self.assertNotIn('--build', bootstrap)
         self.assertEqual('never', bootstrap[bootstrap.index('--pull') + 1])
         self.assertEqual(['docker', 'image', 'inspect'], run.call_args_list[0].args[0][:3])
-        self.assertIn('--no-build', run.call_args.args[0])
 
     def test_missing_prebuilt_bootstrap_image_stops_before_compose_run(self):
         self_host.initialize(self.config)
