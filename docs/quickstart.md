@@ -32,7 +32,7 @@ cd embodied-arm-studio
 
 私有仓库需要 GitHub 认证。按团队要求配置 Git 凭据或在提示时认证，不将令牌写入克隆地址。若已从维护人提供的私有渠道取得并解压部署文件，进入含 `scripts/` 和 `deploy/` 的项目根目录即可。当前没有正式发布的公开 Release 下载入口。
 
-然后在同一台部署机器的 Bash 终端登录 GHCR。使用有相应镜像读取权的账号和具备 `read:packages` 权限的令牌；组织要求 SSO 时需完成相应授权。
+然后在同一台部署机器的 Bash 终端登录 GHCR。使用团队提供的镜像仓库认证方式和有相应镜像读取权的账号；组织要求 SSO 时需完成相应授权。
 
 ```bash
 read -rp 'GitHub login: ' GHCR_USER
@@ -83,3 +83,7 @@ python3 scripts/start.py --config .env.team-core
 ```
 
 接下来阅读[使用指南](user-guide.md)。状态、日志、停止服务和安装问题见[部署说明](deployment.md)。
+
+## 问题反馈
+
+遇到问题时，通过[私有仓库 Issues](https://github.com/Embodied-Arm-Studio-fdu/embodied-arm-studio/issues)反馈版本、操作步骤和去敏后的错误信息。不要提交密码、令牌或私有配置。

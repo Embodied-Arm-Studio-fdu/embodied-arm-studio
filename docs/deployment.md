@@ -17,9 +17,9 @@
 
 ### 功能与平台范围
 
-当前仿真目录实现了 Push、Reach、Grasp、Lift、Lower/Release、Place 和六种固定控制演示；网页能否启动还取决于课程项目、权限及目录状态。已有 Push 固定场景训练与回放结果，不能据此保证其他任务、跨场景或跨训练种子的效果。浏览器直播在目标环境仍需确认可播放，现有录像结果不代表所有远程网络均兼容。
+当前仿真目录实现了 Push、Reach、Grasp、Lift、Lower/Release、Place 和六种固定控制演示；网页能否启动还取决于课程项目、权限及目录状态。训练效果随任务、场景、预算和随机种子变化。实时视频使用 WebRTC，远程访问需配置对应媒体端口，详见下文。
 
-Windows、macOS、WSL2 和 ARM64 宿主安装尚无完整验证。真实机器人控制未开放，界面标为规划中或不可用的能力仍不可使用。Isaac Gym SDK、完整机器人资源需自行合法取得；镜像与源码包不包含历史实验数据库、录像或已训练的 Push 策略。依赖与分发条款见 [NOTICE](../NOTICE.md)。
+当前安装说明适用于 Linux amd64，其他宿主平台暂不提供支持保证。真实机器人控制未开放，界面标为规划中或不可用的能力仍不可使用。Isaac Gym SDK、完整机器人资源需自行合法取得；镜像与源码包不包含历史实验数据库、录像或已训练的 Push 策略。依赖与分发条款见 [NOTICE](../NOTICE.md)。
 
 ## 安装 GPU 模式
 
@@ -121,3 +121,7 @@ python3 scripts/self_host.py --config .env.team-core down
 | 直播无画面 | 检查同一 Run 是否执行中、GPU 视频检查、网页 Origin、媒体地址和 ICE 端口；SSH 访问需转发 ICE TCP |
 | 录像或下载失败 | 确认有效登录、Run 权限及制品是否已生成；向维护人提供 Run 链接与去敏错误 |
 | 重启后助手 Provider 消失 | 临时配置随 API 进程结束；长期使用需配置服务端环境值 |
+
+## 问题反馈
+
+遇到问题时，通过[私有仓库 Issues](https://github.com/Embodied-Arm-Studio-fdu/embodied-arm-studio/issues)反馈版本、操作步骤和去敏后的错误信息。不要提交密码、令牌或私有配置。
