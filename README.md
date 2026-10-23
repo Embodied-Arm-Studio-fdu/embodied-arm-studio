@@ -1,24 +1,18 @@
 # Embodied Arm Studio
 
-A team-private teaching platform for course materials, controlled project workspaces and S1 simulation. Physical robot control stays disabled.
+面向具身智能课程的机械臂仿真学习平台。你可以阅读中英文教材与交互图示，在课程项目中调整参数和奖励，运行 S1 机械臂仿真实验，查看指标、视频和评估结果。
 
-## One recommended new-user entry
+- **学习与实践**：课程、教学班、项目工作区，以及可选的教学助手。
+- **仿真实验**：固定控制演示和 PPO 训练，支持按课程配置开展实验。
+- **结果分析**：运行记录、指标曲线、录像、模型权重与评估报告。
 
-Follow the installation and first-use guide in order:
+## 从这里开始
 
-1. Obtain private delivery/repository and image-read access.
-2. Authenticate Docker to GHCR on the deployment machine. GitHub sign-in, Docker registry authentication and application accounts are separate.
-3. Run the guided installer in an interactive Bash terminal. Choose Core for the first handoff, select a unique installation name and set your own account passwords.
-4. Open the URL printed by the installer, sign in with the accounts you just created and inspect the course materials.
+| 文档 | 适用场景 |
+| --- | --- |
+| [快速开始](docs/quickstart.md) | 在自己的机器上安装并首次登录 |
+| [使用指南](docs/user-guide.md) | 学习课程、配置实验、查看视频和结果 |
+| [部署说明](docs/deployment.md) | GPU 部署、远程访问、日常启停和故障处理 |
 
-After the access and registry steps, use the same command for first installation and later startup:
+Core 模式提供课程、账号与项目编辑；真实仿真、训练和实验视频需要 GPU 模式。当前仓库和预构建镜像为团队私有，需要相应读取权限及认证。真实机器人控制未开放，功能与适用范围见部署说明。
 
-```bash
-python3 scripts/start.py --config .env.team-core
-```
-
-Core needs neither a GPU/Isaac Gym nor host Node/npm. Developer builds, make targets and manual self_host init/up sequences are not alternative recommended new-user entries. GPU is an optional selection in the same guide, subject to external dependencies and an idle GPU.
-
-Core provides accounts, courses, textbook content and project editing. Real simulation, training, live video and training artifacts require GPU mode. Optional teaching-agent providers need separate operator configuration; they are not prerequisites for reading courses.
-
-[中文](README.zh-CN.md) · [Dependency and distribution notices](NOTICE.md)

@@ -11,7 +11,8 @@ SOURCE_PATHS = (
     'README.md', 'README.zh-CN.md', 'AGENTS.md', 'LICENSE', 'NOTICE.md',
     '.gitignore', '.dockerignore', '.github', 'Makefile', 'requirements.txt', 'alembic.ini',
     'docker-compose.yml', 'deploy', 'docker', 'apps', 'agent', 'robotics', 'courses',
-    'templates', 'migrations', 'tests', 'scripts', 'docs/self-hosting',
+    'templates', 'migrations', 'tests', 'scripts',
+    'docs/quickstart.md', 'docs/user-guide.md', 'docs/deployment.md', 'docs/developer.md',
     'simulation/AGENTS.md', 'simulation/doc/SIMULATION_SPEC.md',
     'simulation/src', 'simulation/scripts', 'simulation/tests',
 )
