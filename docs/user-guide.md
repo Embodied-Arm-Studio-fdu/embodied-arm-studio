@@ -59,4 +59,4 @@ Core 模式可用于课程阅读和项目编辑。下面的真实仿真操作需
 
 ## 问题反馈
 
-遇到问题时，通过[私有仓库 Issues](https://github.com/Embodied-Arm-Studio-fdu/embodied-arm-studio/issues)反馈版本、操作步骤和去敏后的错误信息。不要提交密码、令牌或私有配置。
+遇到问题时，通过[GitHub Issues](https://github.com/Embodied-Arm-Studio-fdu/embodied-arm-studio/issues)反馈版本、操作步骤和去敏后的错误信息。不要提交密码、令牌或私有配置。

@@ -12,7 +12,8 @@ SOURCE_PATHS = (
     '.gitignore', '.dockerignore', '.github', 'Makefile', 'requirements.txt', 'alembic.ini',
     'docker-compose.yml', 'deploy', 'docker', 'apps', 'agent', 'robotics', 'courses',
     'templates', 'migrations', 'tests', 'scripts',
-    'docs/quickstart.md', 'docs/user-guide.md', 'docs/deployment.md', 'docs/developer.md',
+    'docs/quickstart.md', 'docs/quickstart.en.md', 'docs/user-guide.md',
+    'docs/deployment.md', 'docs/developer.md', 'docs/images',
     'simulation/AGENTS.md', 'simulation/doc/SIMULATION_SPEC.md',
     'simulation/src', 'simulation/scripts', 'simulation/tests',
 )

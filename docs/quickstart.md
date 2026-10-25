@@ -1,5 +1,7 @@
 # 快速开始
 
+[English](quickstart.en.md) | 简体中文
+
 本文使用预构建镜像安装 Core 模式，完成后即可登录、阅读课程和查看项目。Core 不需要 GPU、Isaac Gym 或宿主机 Node/npm。需要运行真实仿真实验时，继续阅读[部署说明](deployment.md)。
 
 ## 1. 准备环境与权限
@@ -30,7 +32,7 @@ git clone https://github.com/Embodied-Arm-Studio-fdu/embodied-arm-studio.git
 cd embodied-arm-studio
 ```
 
-私有仓库需要 GitHub 认证。按团队要求配置 Git 凭据或在提示时认证，不将令牌写入克隆地址。若已从维护人提供的私有渠道取得并解压部署文件，进入含 `scripts/` 和 `deploy/` 的项目根目录即可。当前没有正式发布的公开 Release 下载入口。
+私有仓库需要 GitHub 认证。按团队要求配置 Git 凭据或在提示时认证，不将令牌写入克隆地址。也可使用有权限的账号从[版本下载](https://github.com/Embodied-Arm-Studio-fdu/embodied-arm-studio/releases)取得预发布部署包及校验值，校验并解压后进入含 `scripts/` 和 `deploy/` 的项目根目录。仓库或下载权限不等于镜像读取权限。
 
 然后在同一台部署机器的 Bash 终端登录 GHCR。使用团队提供的镜像仓库认证方式和有相应镜像读取权的账号；组织要求 SSO 时需完成相应授权。
 
@@ -86,4 +88,4 @@ python3 scripts/start.py --config .env.team-core
 
 ## 问题反馈
 
-遇到问题时，通过[私有仓库 Issues](https://github.com/Embodied-Arm-Studio-fdu/embodied-arm-studio/issues)反馈版本、操作步骤和去敏后的错误信息。不要提交密码、令牌或私有配置。
+遇到问题时，通过[GitHub Issues](https://github.com/Embodied-Arm-Studio-fdu/embodied-arm-studio/issues)反馈版本、操作步骤和去敏后的错误信息。不要提交密码、令牌或私有配置。
