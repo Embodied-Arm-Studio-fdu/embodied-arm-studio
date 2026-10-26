@@ -4,6 +4,8 @@
 
 开发者可从以下文件了解项目：
 
+- [API 与领域实现](../robotics)及[仿真实现](../simulation/src)。
+- [部署配置](deployment.md)与[示例环境变量](../deploy/.env.example)。
 - [开发命令](../Makefile)与[测试目录](../tests)。
 - [镜像版本清单](../deploy/images.json)与[依赖、资源及分发声明](../NOTICE.md)。
 

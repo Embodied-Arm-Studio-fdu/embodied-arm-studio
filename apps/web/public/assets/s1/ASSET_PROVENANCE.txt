@@ -1,11 +1,19 @@
 YHRG S1 v2 assets copied for browser visual preview.
-Source: DyWA/dywa/src/data/assets/yhrg_s1_description
+Original provider: the S1 robot manufacturer (name and original public source
+link have not yet been recorded).
+Intermediate source: DyWA repository path
+dywa/src/data/assets/yhrg_s1_description
 Runtime consumer: simulation/src/simulation_core/s1_isaac_gym_adapter.py
 Robot description: urdf/yhrg_s1_v2.urdf
 Asset set: the URDF and its nine referenced visual STL files.
-License declaration: DyWA/LICENSE states CC BY-NC 4.0.
+License declaration observed in the DyWA repository: the root LICENSE states
+CC BY-NC 4.0.
 Provenance limitation: the source asset directory is not tracked by the local
 DyWA Git checkout, so its upstream commit history could not be verified.
+The available record does not establish that the DyWA license declaration
+covers these manufacturer-provided files or grants this project redistribution
+permission. The manufacturer name, original source link, applicable asset
+license, required attribution and redistribution evidence remain missing.
 Scope: visual geometry and joint preview only. The browser loader does not parse
 collision geometry and makes no dynamics, safety, reachability, or real-control
 claim.

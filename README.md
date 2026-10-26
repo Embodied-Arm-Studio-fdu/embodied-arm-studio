@@ -25,7 +25,7 @@ The learning interface; simulation runs additionally provide metrics and availab
 
 Core mode provides accounts, courses and project editing without a GPU. Simulation, training and experiment video require GPU mode on Linux x86_64 with an NVIDIA GPU, an operator-supplied Isaac Gym Preview 4 SDK and complete S1 assets. After obtaining the project and authenticating, run `python3 scripts/start.py --config .env.team-core` as described in the installation guide.
 
-The repository and prebuilt GHCR images currently require access and authentication. Repository access and image access are separate permissions. Public, login-free image installation is not available. Images are pinned by digest; SDKs and complete robot assets are external dependencies. See [distribution and dependency notices](NOTICE.md).
+The repository and prebuilt GHCR images currently require access and authentication. Repository access and image access are separate permissions. Public, login-free image installation is not available. Images are pinned by digest; SDKs and complete robot assets are external dependencies. See the [distribution notice](NOTICE.md) and [third-party notices](THIRD_PARTY_NOTICES.md).
 
 ## Supported scope
 
@@ -33,14 +33,28 @@ The task catalog implements Push, Reach, Grasp, Lift, Lower/Release, Place and f
 
 Physical robot control is disabled. Windows, macOS, WSL2 and ARM64 host installations have not been fully validated. Live video also depends on browser and network configuration; follow the deployment guide for SSH and media ports.
 
-## Team
+## Contributors
 
-**[adaa77](https://github.com/adaa77) — Backend Platform & Deployment.** Primarily responsible for backend platform design and development: authentication and access control, course and experiment project management, run lifecycle and persistence, simulation integration, results and artifact management, deployment, system integration and release delivery.
+**[adaa77](https://github.com/adaa77) — Backend Platform & Deployment.** Primarily responsible for backend architecture, authentication and permissions, course and experiment management, run lifecycle and persistence, simulation integration, deployment, and release delivery.
 
-**[Kexin333](https://github.com/Kexin333) — Simulation & Robot Learning.** Primarily responsible for robotic simulation environments and training tasks: observation, action and reward design, reinforcement learning workflows, policy evaluation, checkpointing, and integration of simulation execution and result output.
+**[Kexin333](https://github.com/Kexin333) — Simulation & Robot Learning.** Primarily responsible for robotic simulation environments, training tasks, observation/action/reward design, reinforcement learning, policy evaluation, and checkpointing.
 
-**[lxlhhh](https://github.com/lxlhhh) — Frontend Design & Development.** Primarily responsible for interface and interaction design and frontend development: learning and course pages, experiment configuration and run monitoring, training visualizations, and frontend integration of live video, replay and experiment results.
+**[lxlhhh](https://github.com/lxlhhh) — Frontend Design & Development.** Primarily responsible for interface and interaction design, learning and experiment pages, training visualizations, and frontend integration of live video, replay, and results.
+
+These credits describe actual project contributions. They do not alter Git commit authorship or create commits for the GitHub Contributors panel.
+
+## Project Advisors
+
+We thank [julingkun](https://github.com/julingkun) and [yjhsh](https://github.com/yjhsh) for their guidance on project direction, feedback throughout development, and support with resources, reference materials, and technical questions.
+
+## Project and third-party materials
+
+The project team identifies the project code, the three reference initialization checkpoints, and the project-authored course text and diagrams as original team work. The project license has not yet been selected. The S1 URDF/STL assets, NVIDIA Isaac Gym and other dependencies are third-party materials and are not covered by the project license. See [NOTICE](NOTICE.md) and [Third-party notices](THIRD_PARTY_NOTICES.md).
 
 ## Feedback
 
 Report bugs and installation questions through [GitHub Issues](https://github.com/Embodied-Arm-Studio-fdu/embodied-arm-studio/issues). Include the version, steps to reproduce and sanitized error details. Keep passwords, tokens, private configuration and learner data out of reports.
+
+## Acknowledgements
+
+This work was supported by Fudan University's Undergraduate Research Opportunities Program (FDUROP) under Grant No. 268012.

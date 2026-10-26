@@ -1,15 +1,7 @@
-# Distribution and external dependencies
+# Distribution notice
 
-The project owner must choose a license for project-owned code before an open-source release. No license grant for third-party software, robot models, or course materials is implied by this deployment package.
+The project team identifies the project-owned source code, the three reference initialization checkpoints listed in `deploy/reference-models.json`, and the project-authored course text and diagrams as original team work. A project license has not yet been selected; the eventual project license must be stated separately.
 
-- NVIDIA Isaac Gym Preview 4 must be obtained by each operator from [NVIDIA's archive](https://developer.nvidia.com/isaac-gym/download) under its own license. It is not bundled or downloaded automatically. NVIDIA identifies it as unsupported legacy software; the existing simulator is retained for reproducibility.
-- S1 robot assets must be obtained with permission from their original owner. Supply the `yhrg_s1_description` directory, including the URDF and referenced meshes, through a read-only mount. The deployment does not copy the DyWA, S1 SDK, or shifu repositories.
-- PyTorch, CUDA base images, FFmpeg, nv-codec-headers, MediaMTX, Python packages, and npm dependencies retain their respective licenses. Container builds obtain these dependencies from their upstream sources. Review those terms before redistributing built images.
-- The browser robot preview assets and course materials have their own provenance and permissions. The source export includes application assets; the project owner must confirm redistribution rights before public upload.
-- Runtime users, credentials, database contents, experimental videos, non-reference model checkpoints, and private environment files are excluded from the source export. The export is an allowlist, not a substitute for reviewing source files for accidentally embedded secrets.
+The project license does not apply to third-party robot assets, NVIDIA Isaac Gym, container base images, system packages, Python packages, npm packages or other external components. Their respective terms remain in force. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for component sources, license references and distribution status.
 
-Physical robot control remains disabled. Self-hosting includes the implemented learning, simulated training, evidence, evaluation, video, and teaching-agent features. UI capabilities marked planned or blocked are not converted into completed capabilities by deployment.
-
-The small `deploy/reference-models.tar.gz` bundle contains exactly three project-generated initialization checkpoints identified in `deploy/reference-models.json`. These are required by the current Grasp, Lift and Lower/Release task contracts. Their redistribution is subject to the project owner confirming the applicable model and training-source permissions. No other training artifacts are bundled.
-
-The browser S1 provenance file reports a CC BY-NC 4.0 declaration in the source DyWA repository, but the asset directory was untracked and its upstream history was not verified. This is a provenance note, not confirmation that every mesh/URDF may be redistributed or relicensed. Preserve applicable third-party notices and review container dependency terms before publishing images. Public distribution requires the project owner to resolve these permissions and choose the project license.
+Runtime users, credentials, database contents, experimental videos, non-reference checkpoints and private environment files are not part of the source distribution. Physical robot control remains disabled. Product availability and policy quality claims remain limited to the implemented task and its own persisted evidence.

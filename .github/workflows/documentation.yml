@@ -3,6 +3,8 @@ on:
   push:
     paths:
       - 'README*'
+      - 'NOTICE.md'
+      - 'THIRD_PARTY_NOTICES.md'
       - 'docs/**'
       - 'scripts/check_public_docs.py'
       - 'scripts/export_release.py'
@@ -11,6 +13,8 @@ on:
   pull_request:
     paths:
       - 'README*'
+      - 'NOTICE.md'
+      - 'THIRD_PARTY_NOTICES.md'
       - 'docs/**'
       - 'scripts/check_public_docs.py'
       - 'scripts/export_release.py'

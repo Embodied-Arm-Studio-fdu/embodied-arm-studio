@@ -25,7 +25,7 @@
 
 Core 模式提供账号、课程和项目编辑，无需 GPU。仿真、训练和实验视频需要 GPU 模式：Linux x86_64、NVIDIA GPU，以及部署者自行合法取得的 Isaac Gym Preview 4 SDK 和完整 S1 资产。取得项目并按安装指南认证后，运行 `python3 scripts/start.py --config .env.team-core`。
 
-仓库和预构建 GHCR 镜像当前均需访问权限与认证；仓库权限和镜像权限分别配置。目前不提供公众免登录镜像安装。镜像固定到 digest，SDK 和完整机器人资产作为外部依赖。分发与依赖条款见 [NOTICE](NOTICE.md)。
+仓库和预构建 GHCR 镜像当前均需访问权限与认证；仓库权限和镜像权限分别配置。目前不提供公众免登录镜像安装。镜像固定到 digest，SDK 和完整机器人资产作为外部依赖。具体见[分发声明](NOTICE.md)和[第三方来源与许可说明](THIRD_PARTY_NOTICES.md)。
 
 ## 支持范围
 
@@ -33,14 +33,30 @@ Core 模式提供账号、课程和项目编辑，无需 GPU。仿真、训练�
 
 真实机器人控制关闭。Windows、macOS、WSL2 和 ARM64 宿主安装尚无完整验证。直播还取决于浏览器与网络配置；SSH 和媒体端口配置见部署说明。
 
-## 团队与分工
+## 开发贡献
 
-**[adaa77](https://github.com/adaa77) — 后端平台与部署交付。** 主要负责平台后端设计与开发，包括用户与权限、课程及实验项目管理、Run 生命周期与数据持久化、仿真服务对接、实验结果与制品管理，以及部署、系统集成和发布交付。
+**[adaa77](https://github.com/adaa77) — 后端平台与部署。** 主要负责后端架构、认证与权限、课程和实验管理、Run 生命周期与持久化、仿真服务对接、部署和发布交付。
 
-**[Kexin333](https://github.com/Kexin333) — 机器人仿真与强化学习训练。** 主要负责机械臂仿真环境和训练任务开发，包括任务观测、动作与奖励设计，强化学习训练流程、策略评估及模型保存，以及仿真执行和结果输出对接。
+**[Kexin333](https://github.com/Kexin333) — 仿真与机器人学习。** 主要负责机械臂仿真环境、训练任务、观测/动作/奖励设计、强化学习训练、策略评估与模型保存。
 
-**[lxlhhh](https://github.com/lxlhhh) — 前端设计与开发。** 主要负责平台界面与交互设计、前端开发，包括课程与学习页面、实验配置与运行界面、训练指标可视化，以及实时视频、录像和结果查看的前端集成。
+**[lxlhhh](https://github.com/lxlhhh) — 前端设计与开发。** 主要负责界面与交互设计、学习与实验页面、训练指标可视化，以及直播、回放和结果查看的前端集成。
+
+以上是对真实项目贡献的署名；不修改 Git 提交作者，也不为 GitHub 右侧 Contributors 列表制造提交。
+
+## 项目指导
+
+感谢 [julingkun](https://github.com/julingkun) 和 [yjhsh](https://github.com/yjhsh) 在项目方向、开发推进、资源与参考资料获取，以及技术问题讨论方面给予的指导和支持。
+
+## 项目原创与第三方材料
+
+项目团队确认项目代码、三份参考初始化权重以及团队编写的教材文字和图示属于团队原创。项目许可证尚未指定。S1 的 URDF/STL、NVIDIA Isaac Gym 及其他依赖属于第三方材料，不适用项目代码许可证。具体见 [NOTICE](NOTICE.md) 和[第三方来源与许可说明](THIRD_PARTY_NOTICES.md)。
 
 ## 问题反馈
 
 通过 [GitHub Issues](https://github.com/Embodied-Arm-Studio-fdu/embodied-arm-studio/issues)反馈错误和安装问题，提供版本、复现步骤及去敏后的错误信息。不要提交密码、令牌、私有配置或学习者数据。
+
+## 致谢
+
+本项目获得复旦大学本科生学术研究资助计划（FDUROP）支持，资助编号：268012。
+
+This work was supported by Fudan University's Undergraduate Research Opportunities Program (FDUROP) under Grant No. 268012.

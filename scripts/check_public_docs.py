@@ -11,8 +11,10 @@ except ModuleNotFoundError:
 
 
 def main():
-    documents = ['README.md', 'README.zh-CN.md', 'docs/quickstart.md',
-                 'docs/quickstart.en.md', 'docs/user-guide.md', 'docs/deployment.md']
+    documents = ['README.md', 'README.zh-CN.md', 'NOTICE.md',
+                 'THIRD_PARTY_NOTICES.md', 'docs/quickstart.md',
+                 'docs/quickstart.en.md', 'docs/user-guide.md',
+                 'docs/deployment.md']
     selected = {str(path) for path in release_files()}
     errors = []
     for name in documents:
@@ -42,9 +44,21 @@ def main():
         errors.append('Missing Chinese README link')
     if '[English](README.md)' not in (ROOT / 'README.zh-CN.md').read_text():
         errors.append('Missing English README link')
+    expected_links = [
+        'https://github.com/adaa77', 'https://github.com/Kexin333',
+        'https://github.com/lxlhhh', 'https://github.com/julingkun',
+        'https://github.com/yjhsh',
+    ]
+    for name in documents[:2]:
+        text = (ROOT / name).read_text()
+        for link in expected_links:
+            if text.count(link) != 1:
+                errors.append(name + ': missing or duplicated credit link ' + link)
+        if '268012' not in text or 'THIRD_PARTY_NOTICES.md' not in text:
+            errors.append(name + ': missing acknowledgement or third-party notice link')
     if errors:
         raise SystemExit('\n'.join(errors))
-    print('Checked 6 user documents, bilingual team links and delivery file selection; no image build.')
+    print('Checked %d public documents, bilingual credit links and delivery file selection; no image build.' % len(documents))
 
 
 if __name__ == '__main__':

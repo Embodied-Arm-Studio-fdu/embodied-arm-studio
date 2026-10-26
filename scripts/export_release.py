@@ -8,13 +8,13 @@ import tarfile
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_PATHS = (
-    'README.md', 'README.zh-CN.md', 'AGENTS.md', 'LICENSE', 'NOTICE.md',
+    'README.md', 'README.zh-CN.md', 'LICENSE', 'NOTICE.md',
+    'THIRD_PARTY_NOTICES.md',
     '.gitignore', '.dockerignore', '.github', 'Makefile', 'requirements.txt', 'alembic.ini',
     'docker-compose.yml', 'deploy', 'docker', 'apps', 'agent', 'robotics', 'courses',
     'templates', 'migrations', 'tests', 'scripts',
     'docs/quickstart.md', 'docs/quickstart.en.md', 'docs/user-guide.md',
     'docs/deployment.md', 'docs/developer.md', 'docs/images',
-    'simulation/AGENTS.md', 'simulation/doc/SIMULATION_SPEC.md',
     'simulation/src', 'simulation/scripts', 'simulation/tests',
 )
 EXCLUDED_PARTS = frozenset(('.git', '.venv', '.tools', 'node_modules', 'dist', 'var', '__pycache__', '.pytest_cache', '.vite', 'artifacts', 'snapshots', 'logs', 'test-results', 'playwright-report', 'coverage'))

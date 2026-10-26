@@ -3,6 +3,8 @@ on:
   push:
     paths-ignore:
       - 'README*'
+      - 'NOTICE.md'
+      - 'THIRD_PARTY_NOTICES.md'
       - 'docs/**'
       - 'scripts/check_public_docs.py'
       - 'scripts/export_release.py'
@@ -10,6 +12,8 @@ on:
   pull_request:
     paths-ignore:
       - 'README*'
+      - 'NOTICE.md'
+      - 'THIRD_PARTY_NOTICES.md'
       - 'docs/**'
       - 'scripts/check_public_docs.py'
       - 'scripts/export_release.py'
