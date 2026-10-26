@@ -21,11 +21,11 @@
 | [快速开始](docs/quickstart.md) | 安装平台并首次登录 |
 | [使用指南](docs/user-guide.md) | 阅读课程、配置实验、查看结果 |
 | [部署说明](docs/deployment.md) | GPU 要求、远程访问、日常维护及故障处理 |
-| [版本下载](https://github.com/Embodied-Arm-Studio-fdu/embodied-arm-studio/releases) | 部署包与校验值；当前需要仓库访问权限 |
+| [源码仓库](https://github.com/Embodied-Arm-Studio-fdu/embodied-arm-studio) | 克隆或下载公开源码；预构建镜像需单独取得访问权限 |
 
 Core 模式提供账号、课程和项目编辑，无需 GPU。仿真、训练和实验视频需要 GPU 模式：Linux x86_64、NVIDIA GPU，以及部署者自行合法取得的 Isaac Gym Preview 4 SDK 和完整 S1 资产。取得项目并按安装指南认证后，运行 `python3 scripts/start.py --config .env.team-core`。
 
-仓库和预构建 GHCR 镜像当前均需访问权限与认证；仓库权限和镜像权限分别配置。目前不提供公众免登录镜像安装。镜像固定到 digest，SDK 和完整机器人资产作为外部依赖。具体见[分发声明](NOTICE.md)和[第三方来源与许可说明](THIRD_PARTY_NOTICES.md)。
+源码仓库公开，预构建 GHCR 镜像仍为私有，需访问权限与认证；仓库权限和镜像权限分别配置。目前不提供公众免登录镜像安装。镜像固定到 digest，SDK 和完整机器人资产作为外部依赖。具体见[分发声明](NOTICE.md)和[第三方来源与许可说明](THIRD_PARTY_NOTICES.md)。
 
 ## 支持范围
 
@@ -49,7 +49,7 @@ Core 模式提供账号、课程和项目编辑，无需 GPU。仿真、训练�
 
 ## 项目原创与第三方材料
 
-项目团队确认项目代码、三份参考初始化权重以及团队编写的教材文字和图示属于团队原创。项目许可证尚未指定。S1 的 URDF/STL、NVIDIA Isaac Gym 及其他依赖属于第三方材料，不适用项目代码许可证。具体见 [NOTICE](NOTICE.md) 和[第三方来源与许可说明](THIRD_PARTY_NOTICES.md)。
+项目团队确认项目代码、三份参考初始化权重以及团队编写的教材文字和图示属于团队原创。自有代码采用 [MIT 许可证](LICENSE)。S1 的 URDF/STL、NVIDIA Isaac Gym 及其他依赖遵循各自条款，不属于 MIT 授权范围；厂商 S1 资产的再分发依据尚未核实。具体见 [NOTICE](NOTICE.md) 和[第三方来源与许可说明](THIRD_PARTY_NOTICES.md)。
 
 ## 问题反馈
 

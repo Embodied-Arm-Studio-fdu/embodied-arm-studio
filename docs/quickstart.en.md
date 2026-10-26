@@ -7,7 +7,7 @@ Core mode provides accounts, course content and project editing without a GPU, S
 ## Requirements
 
 - Linux amd64, Python 3.8+, Git, Docker Engine and Docker Compose v2.20+, with Docker access for the current user.
-- Access to this repository and its private API/Web images. GPU mode additionally needs Simulation/Worker image access.
+- Access to the private API/Web images; the source repository is public. GPU mode additionally needs Simulation/Worker image access.
 - Network access to GitHub, GHCR and Docker Hub; disk space for GB-scale images and growing runtime data.
 
 Check `python3 --version`, `docker compose version` and `docker info`. Existing platform users can open the URL supplied by their maintainer and follow the [user guide (中文)](user-guide.md).
@@ -19,7 +19,7 @@ git clone https://github.com/Embodied-Arm-Studio-fdu/embodied-arm-studio.git
 cd embodied-arm-studio
 ```
 
-The repository currently requires GitHub authentication. Do not put a token in the clone URL. Alternatively, obtain an archive and checksum from [Releases](https://github.com/Embodied-Arm-Studio-fdu/embodied-arm-studio/releases) using an authorized account, verify it, extract it and enter its project root.
+Cloning the public source repository does not require GitHub authentication. You can also download the source from the repository's Code menu and enter its project root. GHCR images remain private: downloading the source does not grant image access. Do not put a token in the clone URL.
 
 Authenticate Docker separately on the deployment machine, using an account and token allowed to read the images (`read:packages` and organization SSO authorization where required):
 

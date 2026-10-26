@@ -10,7 +10,7 @@
 
 - Python 3.8 或更高版本。
 - Docker Engine、Docker Compose v2.20 或更高版本，以及当前用户的 Docker 访问权限。
-- Git，以及团队私有仓库和 API、Web 镜像的读取权限。
+- Git，以及私有 API、Web 镜像的读取权限；源码仓库可公开访问。
 - 可访问 GitHub、GHCR 和 Docker Hub 的网络，及用于镜像和运行数据的磁盘空间。镜像为 GB 量级，请勿按源码大小估算空间。
 
 在部署机器的终端确认环境可用：
@@ -25,14 +25,14 @@ docker info
 
 ## 2. 获取项目并登录镜像仓库
 
-使用已获仓库读取权限的 GitHub 身份克隆项目：
+克隆公开源码仓库：
 
 ```bash
 git clone https://github.com/Embodied-Arm-Studio-fdu/embodied-arm-studio.git
 cd embodied-arm-studio
 ```
 
-私有仓库需要 GitHub 认证。按团队要求配置 Git 凭据或在提示时认证，不将令牌写入克隆地址。也可使用有权限的账号从[版本下载](https://github.com/Embodied-Arm-Studio-fdu/embodied-arm-studio/releases)取得预发布部署包及校验值，校验并解压后进入含 `scripts/` 和 `deploy/` 的项目根目录。仓库或下载权限不等于镜像读取权限。
+克隆公开源码无需 GitHub 认证，也可从仓库的 Code 菜单下载源码。进入含 `scripts/` 和 `deploy/` 的项目根目录。GHCR 镜像仍为私有，下载源码不等于取得镜像读取权限；不要将令牌写入克隆地址。
 
 然后在同一台部署机器的 Bash 终端登录 GHCR。使用团队提供的镜像仓库认证方式和有相应镜像读取权的账号；组织要求 SSO 时需完成相应授权。
 

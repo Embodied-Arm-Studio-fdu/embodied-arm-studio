@@ -21,11 +21,11 @@ The learning interface; simulation runs additionally provide metrics and availab
 | [Installation](docs/quickstart.en.md) | Install the platform and sign in for the first time |
 | [User guide (中文)](docs/user-guide.md) | Read courses, configure experiments and inspect results |
 | [Deployment guide (中文)](docs/deployment.md) | GPU requirements, remote access, maintenance and troubleshooting |
-| [Downloads](https://github.com/Embodied-Arm-Studio-fdu/embodied-arm-studio/releases) | Deployment packages and checksums; repository access is currently required |
+| [Source repository](https://github.com/Embodied-Arm-Studio-fdu/embodied-arm-studio) | Clone or download the public source; prebuilt images require separate access |
 
 Core mode provides accounts, courses and project editing without a GPU. Simulation, training and experiment video require GPU mode on Linux x86_64 with an NVIDIA GPU, an operator-supplied Isaac Gym Preview 4 SDK and complete S1 assets. After obtaining the project and authenticating, run `python3 scripts/start.py --config .env.team-core` as described in the installation guide.
 
-The repository and prebuilt GHCR images currently require access and authentication. Repository access and image access are separate permissions. Public, login-free image installation is not available. Images are pinned by digest; SDKs and complete robot assets are external dependencies. See the [distribution notice](NOTICE.md) and [third-party notices](THIRD_PARTY_NOTICES.md).
+The source repository is public. Prebuilt GHCR images remain private and require access and authentication. Repository access and image access are separate permissions. Public, login-free image installation is not available. Images are pinned by digest; SDKs and complete robot assets are external dependencies. See the [distribution notice](NOTICE.md) and [third-party notices](THIRD_PARTY_NOTICES.md).
 
 ## Supported scope
 
@@ -49,7 +49,7 @@ We thank [julingkun](https://github.com/julingkun) and [yjhsh](https://github.co
 
 ## Project and third-party materials
 
-The project team identifies the project code, the three reference initialization checkpoints, and the project-authored course text and diagrams as original team work. The project license has not yet been selected. The S1 URDF/STL assets, NVIDIA Isaac Gym and other dependencies are third-party materials and are not covered by the project license. See [NOTICE](NOTICE.md) and [Third-party notices](THIRD_PARTY_NOTICES.md).
+The project team identifies the project code, the three reference initialization checkpoints, and the project-authored course text and diagrams as original team work. Project-owned code is licensed under the [MIT License](LICENSE). The S1 URDF/STL assets, NVIDIA Isaac Gym and other dependencies follow their respective terms and are not covered by the MIT grant. The redistribution basis for the manufacturer-provided S1 assets has not been verified. See [NOTICE](NOTICE.md) and [Third-party notices](THIRD_PARTY_NOTICES.md).
 
 ## Feedback
 
